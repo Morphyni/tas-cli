@@ -8,4 +8,6 @@ const (
 
 	//environment property for indicating extra debug info; sensitive data will be displayed. Don't use
 	TASCLI_DBG string = "TASCLI_DBG"
+
+	OBFUSCATE_COOKIE_VALUE = true
 )
