@@ -74,7 +74,7 @@ func GetPlaceHolderValue(placeholderType int) (error, string) {
 	//  return nil, "true"
 	// }
 
-	if placeholderType != TIBCO_ACCOUNTS_CLIENTID_PLACEHOLDER || os.Getenv(consts.TIBCLI_DBG) != "" {
+	if placeholderType != TIBCO_ACCOUNTS_CLIENTID_PLACEHOLDER || os.Getenv(consts.TASCLI_DBG) != "" {
 		//don't debug print out sensitive TIBCO_ACCOUNTS_CLIENTID_PLACEHOLDER unless explicitly told so
 		//log.Debugf("Placeholder '%s' length '%d' , value: '%s'", PLACEHOLDER_NAMES[placeholderType], len(PLACEHOLDER_VALUES[placeholderType]), PLACEHOLDER_VALUES[placeholderType])
 	}
