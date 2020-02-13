@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+
+	"github.com/Morphyni/tas-cli/eula"
 	"github.com/urfave/cli"
 )
 
@@ -14,8 +16,12 @@ func main() {
 	app.Copyright = "2018 @boom.go"
 	app.Commands = []cli.Command{
 		{
-			Name:  "eula",
-			Usage: "Display the end use license agreement",
+			Name:      "eula",
+			Usage:     "Display the End User License Agreement (EULA).",
+			ArgsUsage: " ", // space is needed, otherwise [arguments...] will be displayed in help
+			Action: func(c *cli.Context) {
+				fmt.Println(eula.Tas_eula)
+			},
 		},
 		{
 			Name:  "login",
