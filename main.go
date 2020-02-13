@@ -65,7 +65,6 @@ func main() {
 					Name:  "region, r",
 					Usage: "Passing region in command line argument.",
 				},
-				Action: commands.Login,
 			},
 			Action: func(c *cli.Context) {
 				nflags := c.NumFlags()
