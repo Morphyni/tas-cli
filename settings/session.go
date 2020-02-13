@@ -8,6 +8,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+const (
+	SESSION_FILENAME string = "session"
+)
+
 // Session type represents the user session.
 type Session struct {
 	// serializable fields
