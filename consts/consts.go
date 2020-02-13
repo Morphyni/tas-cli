@@ -10,4 +10,7 @@ const (
 	TASCLI_DBG string = "TASCLI_DBG"
 
 	OBFUSCATE_COOKIE_VALUE = true
+
+	//environment property governing persistence of OAuth tokens
+	DONT_PERSIST string = "TIBCLI_DONT_PERSIST"
 )

@@ -76,6 +76,47 @@ func CheckError(err error) {
 	}
 }
 
+// GetEnvParam get env param value
+func GetEnvParam(name string) string {
+	value := os.Getenv(name)
+	if value != "" {
+		log.Debugf("Env param '%s' is found, it has value: %s", name, value)
+	} else {
+		log.Debugf("Env param '%s' is not found", name)
+	}
+	return value
+}
+
+// LoadToken loads user TA AccessToken
+func LoadToken(unobfuscate bool) (*settings.Token, error) {
+	token, err := settings.NewToken()
+	if err != nil {
+		return nil, err
+	}
+	err = token.Read(unobfuscate)
+	if err != nil {
+		return nil, err
+	}
+	return token, nil
+}
+
+// LoadSettings loads user's all token/profile/session from ~/.tibcli
+func LoadSettings() (*settings.Profile, *settings.Session, *settings.Token, error) {
+	profile, err := LoadProfile()
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	session, err := LoadSession(consts.OBFUSCATE_COOKIE_VALUE)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	token, err := LoadToken(consts.OBFUSCATE_COOKIE_VALUE)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	return profile, session, token, err
+}
+
 // GetOrgAndRegion gets org and region info from session
 func GetOrgAndRegion() (string, string, error) {
 	var org string
