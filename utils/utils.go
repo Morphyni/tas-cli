@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -198,4 +199,40 @@ func PromptForPassword() string {
 	CheckError(err)
 	fmt.Println()
 	return string(pwd)
+}
+
+// RestCallAndCookiesRefreshHandler will do the following things:
+// 1. load cookies from local session file prepare for the REST request
+// 2. send request/get response for the REST call
+// 3. store new cookie values from response to local session file
+func RestCallAndCookiesRefreshHandler(restCallRequest *types.RestCallRequest) (*utilities.RestHandlerV3Response, error) {
+
+	cookieJar, err := GetCookieJar(restCallRequest.Url)
+	if err != nil {
+		errMsg := fmt.Sprintf("Load cookies failed with error : '%+v'", err.Error())
+		log.Debug(errMsg)
+		return nil, errors.New(errMsg)
+	}
+
+	restHandle := utilities.NewRestHandlerV3(restCallRequest.UserId, restCallRequest.RetryAttempt)
+
+	request := &utilities.RestHandlerV3Request{
+		Url:        restCallRequest.Url.String(),
+		Headers:    restCallRequest.Headers,
+		Method:     restCallRequest.Method,
+		CookieJar:  cookieJar,
+		Body:       restCallRequest.Body,
+		LogRequest: restCallRequest.LogRequest}
+
+	response := restHandle.ExecuteAPIV3(request)
+	if response.ErrorResponse == nil {
+		// Persist new Cookie values get from response to local session file
+		refreshCookieErr := RefreshCookies(response.Cookies)
+		if refreshCookieErr != nil {
+			errMsg := fmt.Sprintf("Persist cookies failed with error : '%+v'", refreshCookieErr.Error())
+			log.Error(errMsg)
+			return response, errors.New(errMsg)
+		}
+	}
+	return response, nil
 }

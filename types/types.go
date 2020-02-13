@@ -2,7 +2,10 @@ package types
 
 import (
 	"bytes"
+	"io"
+	"net/url"
 
+	"git.tibco.com/git/product/troposphere/golib.git/atmos/utilities"
 	"github.com/urfave/cli"
 )
 
@@ -355,4 +358,14 @@ type BuildServerResponse struct {
 	Status  string `json:"status"`
 	Message string `json:"message"`
 	Details string `json:"details"`
+}
+
+type RestCallRequest struct {
+	Method       string                  // REST method
+	Url          *url.URL                // URL of the Rest API to be invoked
+	Headers      map[string]string       // HTTP Headers to be passed while invoking the API
+	Body         io.Reader               // Request body for the API
+	LogRequest   bool                    // if true; then the rest handler will log the request otherwise will skip it
+	UserId       string                  // user Id used for logging
+	RetryAttempt *utilities.RetryAttempt // retry times if connection failed
 }
