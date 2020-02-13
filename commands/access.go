@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Morphyni/tas-cli/client"
 	"github.com/Morphyni/tas-cli/consts"
 	"github.com/Morphyni/tas-cli/settings"
 	"github.com/Morphyni/tas-cli/types"

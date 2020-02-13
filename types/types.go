@@ -76,7 +76,7 @@ type IDMLoginResponse struct {
 	DomainUrl      string     `json:"domainUrl"`
 	OrgDisplayName string     `json:"orgDisplayName"`
 	OrgList        []OrgEntry `json:"orgList"`
-	KnownRegion    string     `json:knownRegion`
+	KnownRegion    string     `json:"knownRegion"`
 }
 
 type OrgEntry struct {
@@ -281,9 +281,10 @@ type AppManagerGetAppInfoResponse struct {
 
 // ErrorResponse is error response from domain server, build server, app manager , orchestrator
 type ErrorResponse struct {
-	ErrorCode   string `json:"errorCode"`
-	ErrorMsg    string `json:"errorMsg"`
-	ErrorDetail string `json:"errorDetail, omitempty"`
+	ErrorCode string `json:"errorCode"`
+	ErrorMsg  string `json:"errorMsg"`
+	// ErrorDetail string `json:"errorDetail, omitempty"`
+	ErrorDetail string `json:"errorDetail"`
 }
 
 type SuccessResponse struct {
