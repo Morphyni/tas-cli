@@ -76,6 +76,25 @@ func CheckError(err error) {
 	}
 }
 
+// GetOrgAndRegion gets org and region info from session
+func GetOrgAndRegion() (string, string, error) {
+	var org string
+	var region string
+	session, err := LoadSession(consts.OBFUSCATE_COOKIE_VALUE)
+	if len(session.OrgName) > 0 {
+		org = session.OrgName
+	}
+
+	if len(session.OrgDisplayName) > 0 {
+		orgDisplayName := session.OrgDisplayName
+		if strings.HasPrefix(orgDisplayName, org) {
+			s := strings.Split(orgDisplayName, org)
+			region = strings.TrimSpace(s[len(s)-1])
+		}
+	}
+	return org, region, err
+}
+
 // LoadSession loads user Session
 func LoadSession(unobfuscate bool) (*settings.Session, error) {
 	session, err := settings.NewSession()

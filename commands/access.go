@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/Morphyni/tas-cli/consts"
 	"github.com/Morphyni/tas-cli/settings"
@@ -90,6 +91,46 @@ func Login(c *cli.Context) {
 
 	utils.CheckError(err)
 	return
+}
+
+// TaLogin performs login to TIBCO Accounts with username and password
+func TaLogin(url, user, password string) (*types.OAResponse, error) {
+
+	oauth, err := client.NewOAuthClient(url)
+	if err != nil {
+		return nil, err
+	}
+	err, clientId := settings.GetPlaceHolderValue(settings.TIBCO_ACCOUNTS_CLIENTID_PLACEHOLDER)
+	if err != nil {
+		log.Debug(err)
+		utils.CheckError(errors.New("TIBCO Accounts' client id not set"))
+	}
+
+	resp, err := oauth.Login(types.AuthRequest{Username: user, Pwd: password, ClientId: clientId})
+	if err == nil {
+		token, e := settings.NewToken()
+		if e != nil {
+			log.Errorf("NON-FATAL: Couldn't create session file for login token: %v", e)
+		}
+
+		// here we keep TA accessToken in a Cookie just want to get benefit of reusing the isValid() func in settingsfile.go which checks the cookie expired or not.
+		taTokenCookie := &http.Cookie{Name: settings.ACCESS_TOKEN_KEY_NAME, Value: resp.AccessToken, //TODO switch to RefreshToken
+			Expires: time.Now().UTC().Add(time.Duration(resp.ExpiresIn) * time.Second)}
+
+		token.AccessToken = taTokenCookie
+
+		if utils.GetEnvParam(consts.DONT_PERSIST) == "" {
+			e = token.Write(consts.OBFUSCATE_COOKIE_VALUE) //obfuscate Token
+			if e != nil {
+				log.Errorf("NON-FATAL: Couldn't persist the login token to disk: %v", e)
+			} else {
+				log.Debugf("Persisted the login token to disk.")
+			}
+		} else {
+			log.Infof("No OAuth token persisted since environment variable '%s' wasn't set.", consts.DONT_PERSIST)
+		}
+	}
+	return resp, err
 }
 
 // IsValidPlatformApi validates cli version against platform api by accessing /platformapiversion
